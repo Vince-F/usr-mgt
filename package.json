@@ -1,0 +1,37 @@
+{
+  "name": "usr-mgt",
+  "version": "0.1.0",
+  "description": "A module to provide a basic user management into your application",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node_modules/.bin/tsc"
+  },
+  "keywords": [
+    "server",
+    "user",
+    "management",
+    "authentication"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Vince-F/usr-mgt.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Vince-F/usr-mgt/issues"
+  },
+  "author": "Vincent Francolin",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "mongoose": "^4.13.9"
+  },
+  "devDependencies": {
+    "@types/express": "^4.0.39",
+    "@types/express-session": "^1.15.6",
+    "@types/mongoose": "^4.7.32",
+    "typescript": "^2.7.2"
+  }
+}

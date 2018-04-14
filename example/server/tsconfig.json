@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "outDir": "lib/",
+        "declaration":true,
+        "target":"es2015",
+        "rootDir":"./src"
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "./lib"
+    ]
+}
