@@ -1,6 +1,6 @@
 # usr-mgt
 
-##Description
+## Description
 usr-mgt (short for User Management) is a NodeJS server app exposing basic API for create/managing user along with their authentication.
 
 It's divided in two different (almost) REST APIs in form of express router objects:
@@ -12,12 +12,12 @@ express router you can prefix them with whatever you want (see example):
 - authentication url scheme
 - user API url scheme
 
-##Changelog
+## Changelog
 
-###V0.1.0
+### V0.1.0
 Initial version.
 
-##Roadmap and planned features
+## Roadmap and planned features
 - encrypt password 
 - add options to customize the API
 - add a standalone a mode so you can launch the API on its own
