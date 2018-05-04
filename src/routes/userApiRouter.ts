@@ -25,8 +25,8 @@ export class UserApiRouter {
         this.router.put("/:id", (req, res) => { this.update(req, res) });
         this.router.delete("/:id", (req, res) => { this.delete(req, res) });
         this.router.put("/:id/changePassword", (req, res) => { this.changePassword(req, res) });
-        /*this.router.put("/:id/requestPasswordReset", (req, res) => { this.requestPasswordReset(req, res) });
-        this.router.put("/:id/resetPassword", (req, res) => { this.resetPassword(req, res); });*/
+        this.router.put("/:id/requestPasswordReset", (req, res) => { this.requestPasswordReset(req, res) });
+        this.router.put("/:id/resetPassword", (req, res) => { this.resetPassword(req, res); });
     }
 
     create(req: express.Request, res: express.Response) {
@@ -95,7 +95,7 @@ export class UserApiRouter {
             });
     }
 
-    /*requestPasswordReset(req: express.Request, res: express.Response) {
+    requestPasswordReset(req: express.Request, res: express.Response) {
         let id = req.params.id;
         let { email } = req.body.data;
 
@@ -105,9 +105,9 @@ export class UserApiRouter {
             }).catch((error) => {
                 res.status(200).send({ success: false, error });
             });
-    }*/
+    }
 
-    /*resetPassword(req: express.Request, res: express.Response) {
+    resetPassword(req: express.Request, res: express.Response) {
         let id = req.params.id;
         let { token, newPassword } = req.body.data;
 
@@ -117,5 +117,5 @@ export class UserApiRouter {
             }).catch((error) => {
                 res.status(200).send({ success: false, error });
             })
-    }*/
+    }
 }
