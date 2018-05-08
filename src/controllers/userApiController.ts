@@ -15,6 +15,7 @@ export class UserApiController {
                             let user = new User(login, encryptedPassword, email);
                             return user.save()
                                 .then(() => {
+                                    delete user.password;
                                     return user;
                                 });
                         });
@@ -34,6 +35,7 @@ export class UserApiController {
                 } else if (!user) {
                     reject("User doesn't exist");
                 } else {
+                    delete user.password;
                     resolve(user);
                 }
             });
@@ -46,6 +48,9 @@ export class UserApiController {
                 if (error) {
                     reject(error);
                 } else {
+                    users.forEach((user) => {
+                        delete user.password;
+                    });
                     resolve(users);
                 }
             });
@@ -66,6 +71,7 @@ export class UserApiController {
                         if (error) {
                             reject(error);
                         } else {
+                            delete userData.password;
                             resolve(userData);
                         }
                     });
@@ -100,6 +106,7 @@ export class UserApiController {
                                     if (error) {
                                         reject(error);
                                     } else {
+                                        delete user.password;
                                         resolve(user);
                                     }
                                 });
