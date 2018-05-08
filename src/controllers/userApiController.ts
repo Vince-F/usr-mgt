@@ -1,33 +1,37 @@
-import {User} from "../models/user";
+import { User } from "../models/user";
+import bcrypt = require("bcryptjs");
 
 export class UserApiController {
 
-    create(login:string,password:string,email:string):Promise<User> {
+    create(login: string, password: string, email: string): Promise<User> {
         // check that login doesn't exist
         return this.retrieveOne(login)
             .then(() => {
                 return Promise.reject("Login is already taken");
             }).catch((error) => {
-                if(error === "User doesn't exist") {
-                    let user = new User(login,password,email);
-                    return user.save()
-                        .then(() => {
-                            return user;  
+                if (error === "User doesn't exist") {
+                    return this.encryptPassword(password)
+                        .then((encryptedPassword) => {
+                            let user = new User(login, encryptedPassword, email);
+                            return user.save()
+                                .then(() => {
+                                    return user;
+                                });
                         });
                 } else if (error === "Login is already taken") {
                     return Promise.reject(error);
                 } else {
                     return Promise.reject("Fail to check login uniqueness");
                 }
-            });   
+            });
     }
 
-    retrieveOne(login:string):Promise<User> {
-        return new Promise((resolve,reject) => {
-            User.getMongooseModel().findOne({login},(error:any,user:User) => {
-                if(error) {
+    retrieveOne(login: string): Promise<User> {
+        return new Promise((resolve, reject) => {
+            User.getMongooseModel().findOne({ login }, (error: any, user: User) => {
+                if (error) {
                     reject(error);
-                } else if(!user) {
+                } else if (!user) {
                     reject("User doesn't exist");
                 } else {
                     resolve(user);
@@ -36,10 +40,10 @@ export class UserApiController {
         });
     }
 
-    retrieveAll():Promise<Array<User>> {
-        return new Promise((resolve,reject) => {
-            User.getMongooseModel().find((error:any,users:Array<User>) => {
-                if(error) {
+    retrieveAll(): Promise<Array<User>> {
+        return new Promise((resolve, reject) => {
+            User.getMongooseModel().find((error: any, users: Array<User>) => {
+                if (error) {
                     reject(error);
                 } else {
                     resolve(users);
@@ -48,18 +52,18 @@ export class UserApiController {
         });
     }
 
-    update(login:string,userData:User):Promise<User> {
-        return new Promise((resolve,reject) => {
-            User.getMongooseModel().findOne({login},(error:any,user:User) => {
-                if(error) {
+    update(login: string, userData: User): Promise<User> {
+        return new Promise((resolve, reject) => {
+            User.getMongooseModel().findOne({ login }, (error: any, user: User) => {
+                if (error) {
                     reject(error);
-                } else if(user === undefined) {
+                } else if (user === undefined) {
                     reject("User doesn't exist");
                 } else {
                     userData.login = user.login;
                     userData.password = user.password;
-                    User.getMongooseModel().updateOne({login},userData,(error:any) => {
-                        if(error) {
+                    User.getMongooseModel().updateOne({ login }, userData, (error: any) => {
+                        if (error) {
                             reject(error);
                         } else {
                             resolve(userData);
@@ -70,10 +74,10 @@ export class UserApiController {
         });
     }
 
-    delete(login:string) {
-        return new Promise((resolve,reject) => {
-            User.getMongooseModel().deleteOne({login:login},(error:any) => {
-                if(error) {
+    delete(login: string) {
+        return new Promise((resolve, reject) => {
+            User.getMongooseModel().deleteOne({ login: login }, (error: any) => {
+                if (error) {
                     reject(error);
                 } else {
                     resolve();
@@ -82,27 +86,37 @@ export class UserApiController {
         });
     }
 
-    changePassword(login:string,oldPassword:string,newPassword:string):Promise<User> {
-        return new Promise((resolve,reject) => {
-            User.getMongooseModel().findOne({login},(error:any,user:User) => {
-                if(error) {
+    changePassword(login: string, oldPassword: string, newPassword: string): Promise<User> {
+        return new Promise((resolve, reject) => {
+            User.getMongooseModel().findOne({ login }, (error: any, user: User) => {
+                if (error) {
                     reject(error);
                 } else {
-                    if(user.password === oldPassword) {
-                        user.password = newPassword;
-                        User.getMongooseModel().updateOne({login},user,(error:any) => {
-                            if(error) {
+                    if (user.password === oldPassword) {
+                        this.encryptPassword(newPassword)
+                            .then((encryptedPassword) => {
+                                user.password = encryptedPassword;
+                                User.getMongooseModel().updateOne({ login }, user, (error: any) => {
+                                    if (error) {
+                                        reject(error);
+                                    } else {
+                                        resolve(user);
+                                    }
+                                });
+                            }).catch((error) => {
                                 reject(error);
-                            } else {
-                                resolve(user);
-                            }
-                        });
+                            });
                     } else {
                         reject("Your current password is wrong.")
                     }
                 }
             });
         });
+    }
+
+    async encryptPassword(password: string): Promise<string> {
+        let salt = await bcrypt.genSalt();
+        return await bcrypt.hash(password, salt);
     }
 
     /*requestPasswordReset(login:string,email:string):Promise<boolean> {
