@@ -1,4 +1,4 @@
-/*import mongoose = require("mongoose");
+import mongoose = require("mongoose");
 
 export class ResetPasswordToken {
     userId:string;
@@ -54,4 +54,4 @@ export class ResetPasswordToken {
             }
         });
     }
-}*/
+}
