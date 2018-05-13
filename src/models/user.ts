@@ -1,4 +1,5 @@
 import mongoose = require("mongoose");
+import { optionsManagerInstance } from "../controllers/optionsManagerInstance";
 
 export class User {
     login:string;
@@ -36,7 +37,7 @@ export class User {
 
     static getMongooseModel():mongoose.Model<mongoose.Document> {
         if(this.mongooseSchema === undefined) {
-            this.mongooseSchema = mongoose.model("AppUsers",this.getMongooseSchema());
+            this.mongooseSchema = mongoose.model(optionsManagerInstance.getCurrentOptions().database.tableName,this.getMongooseSchema());
         }
         return this.mongooseSchema;
     }
@@ -55,6 +56,6 @@ export class User {
                 type: String,
                 required:true
             }
-        })
+        });
     }
 }

@@ -13,7 +13,7 @@ app.use(expressSession({
     cookie: { secure: true }
 }));
 const dbUrl = "mongodb://localhost/usrMgtTests";
-usr_mgt_1.UserManagementApi.instantiateApiAndGetRouters(dbUrl)
+usr_mgt_1.UserManagementApi.instantiateApiAndGetRouters({ database: { url: dbUrl, tableName: "testAppUser" } })
     .then((userApiRouters) => {
     app.use("/auth", userApiRouters.authenticationRouter);
     app.use("/api/user", userApiRouters.userApiRouter);
