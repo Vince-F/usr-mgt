@@ -1,4 +1,5 @@
 import { User } from "../models/user";
+import bcrypt = require("bcryptjs");
 import { ResetPasswordToken } from "../models/resetPasswordToken";
 import { MailerController } from "../utilities/mailerController";
 
@@ -8,7 +9,6 @@ export class UserApiController {
     constructor(mailer:MailerController) {
         this.mailSender = mailer;
     }
-
     create(login: string, password: string, email: string): Promise<User> {
         // check that login doesn't exist
         return this.retrieveOne(login)
@@ -16,10 +16,14 @@ export class UserApiController {
                 return Promise.reject("Login is already taken");
             }).catch((error) => {
                 if (error === "User doesn't exist") {
-                    let user = new User(login, password, email);
-                    return user.save()
-                        .then(() => {
-                            return user;
+                    return this.encryptPassword(password)
+                        .then((encryptedPassword) => {
+                            let user = new User(login, encryptedPassword, email);
+                            return user.save()
+                                .then(() => {
+                                    delete user.password;
+                                    return user;
+                                });
                         });
                 } else if (error === "Login is already taken") {
                     return Promise.reject(error);
@@ -37,6 +41,7 @@ export class UserApiController {
                 } else if (!user) {
                     reject("User doesn't exist");
                 } else {
+                    delete user.password;
                     resolve(user);
                 }
             });
@@ -49,6 +54,9 @@ export class UserApiController {
                 if (error) {
                     reject(error);
                 } else {
+                    users.forEach((user) => {
+                        delete user.password;
+                    });
                     resolve(users);
                 }
             });
@@ -69,6 +77,7 @@ export class UserApiController {
                         if (error) {
                             reject(error);
                         } else {
+                            delete userData.password;
                             resolve(userData);
                         }
                     });
@@ -96,14 +105,20 @@ export class UserApiController {
                     reject(error);
                 } else {
                     if (user.password === oldPassword) {
-                        user.password = newPassword;
-                        User.getMongooseModel().updateOne({ login }, user, (error: any) => {
-                            if (error) {
+                        this.encryptPassword(newPassword)
+                            .then((encryptedPassword) => {
+                                user.password = encryptedPassword;
+                                User.getMongooseModel().updateOne({ login }, user, (error: any) => {
+                                    if (error) {
+                                        reject(error);
+                                    } else {
+                                        delete user.password;
+                                        resolve(user);
+                                    }
+                                });
+                            }).catch((error) => {
                                 reject(error);
-                            } else {
-                                resolve(user);
-                            }
-                        });
+                            });
                     } else {
                         reject("Your current password is wrong.")
                     }
@@ -112,6 +127,11 @@ export class UserApiController {
         });
     }
 
+    async encryptPassword(password: string): Promise<string> {
+        let salt = await bcrypt.genSalt();
+        return await bcrypt.hash(password, salt);
+    }
+  
     requestPasswordReset(login: string, email: string): Promise<{token:string}> {
         var token = Math.floor(Math.random() * 1000000000).toString(36);
         return this.retrieveOne(login)
