@@ -13,4 +13,6 @@ export declare class UserApiRouter {
     update(req: express.Request, res: express.Response): void;
     delete(req: express.Request, res: express.Response): void;
     changePassword(req: express.Request, res: express.Response): void;
+    requestPasswordReset(req: express.Request, res: express.Response): void;
+    resetPassword(req: express.Request, res: express.Response): void;
 }
