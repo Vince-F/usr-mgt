@@ -112,8 +112,8 @@ export class UserApiController {
         });
     }
 
-    requestPasswordReset(login: string, email: string): Promise<boolean> {
-        var token = (Math.random() * 1000000000).toString(36);
+    requestPasswordReset(login: string, email: string): Promise<{token:string}> {
+        var token = Math.floor(Math.random() * 1000000000).toString(36);
         return this.retrieveOne(login)
             .then((user) => {
                 if (user.email === email) {
@@ -125,7 +125,7 @@ export class UserApiController {
                                 "<p>Please click on this <a href='" + link +"'>link</a> to change your password.</p></html>"
                             return this.mailSender.sendEmail(email,"Password reset request",emailBody)
                                 .then(() => {
-                                    return true;
+                                    return {token:token};
                                 });
                         });
                 }
