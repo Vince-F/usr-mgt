@@ -9,6 +9,7 @@ export declare class UserApiController {
     update(login: string, userData: User): Promise<User>;
     delete(login: string): Promise<{}>;
     changePassword(login: string, oldPassword: string, newPassword: string): Promise<User>;
+    encryptPassword(password: string): Promise<string>;
     requestPasswordReset(login: string, email: string): Promise<{
         token: string;
     }>;
