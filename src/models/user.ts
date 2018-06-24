@@ -5,9 +5,7 @@ export class User {
     login:string;
     password:string;
     email:string;
-    get _id():string {
-        return this._id;
-    }
+    _id?:string;
 
     private mongooseModelInstance:any;
     private static mongooseSchema:mongoose.Model<mongoose.Document>;

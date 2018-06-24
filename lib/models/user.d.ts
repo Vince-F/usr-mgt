@@ -4,7 +4,7 @@ export declare class User {
     login: string;
     password: string;
     email: string;
-    readonly _id: string;
+    _id?: string;
     private mongooseModelInstance;
     private static mongooseSchema;
     constructor(login: string, password: string, email: string);
