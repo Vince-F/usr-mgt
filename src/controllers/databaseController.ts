@@ -8,16 +8,10 @@ export class DatabaseController {
         this.host = dbUrl;
     }
 
-    connect():Promise<boolean> {
-        return new Promise((resolve,reject) => {
-            mongoose.connect(this.host);
-            this.db = mongoose.connection;
-            this.db.on('error',(error) => {
-                reject(error);
+    connect(options?:mongoose.ConnectionOptions):Promise<void> {
+        return mongoose.connect(this.host,options)
+            .then(() => {
+                this.db = mongoose.connection;
             });
-            this.db.once('open',() => {
-                resolve(true);
-            });
-        });
     }
 }

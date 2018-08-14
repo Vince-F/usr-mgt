@@ -17,7 +17,7 @@ export class UserManagementApi {
         let dbCtrl = new DatabaseController(optionsManagerInstance.getCurrentOptions().database.url);
         let mailer = new MailerController("smtp.ethereal.email","e6tmngiprgh2vrtf@ethereal.email","mXm64rurdPtKfE19tq");
 
-        return dbCtrl.connect()
+        return dbCtrl.connect({auth:options.database.auth})
             .then(() => {
                 let authCtrl = new AuthenticationController();
                 let userApiCtrl = new UserApiController(mailer);

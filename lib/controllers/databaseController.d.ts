@@ -1,6 +1,8 @@
+/// <reference types="mongoose" />
+import mongoose = require("mongoose");
 export declare class DatabaseController {
     private db;
     private host;
     constructor(dbUrl: string);
-    connect(): Promise<boolean>;
+    connect(options?: mongoose.ConnectionOptions): Promise<void>;
 }
