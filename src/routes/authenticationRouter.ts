@@ -49,7 +49,7 @@ export class AuthenticationRouter {
     retrieveCurrentSession(req: express.Request, res: express.Response) {
         this.ctrlInstance.retrieveCurrentSession(req)
             .then((userData:User) => {
-                res.status(200).send({success:true});
+                res.status(200).send({success:true,result:userData});
             }).catch((error) => {
                 res.status(200).send({success:false,error:error});
             });
